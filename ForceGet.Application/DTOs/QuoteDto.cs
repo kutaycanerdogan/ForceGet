@@ -1,0 +1,19 @@
+using ForceGet.Domain.Enums;
+
+namespace ForceGet.Application.DTOs;
+
+public class QuoteDto
+{
+    public int Id { get; set; }
+    public int UserId { get; set; }
+    public string Country { get; set; } = string.Empty;
+    public string City { get; set; } = string.Empty;
+    public ShippingMode Mode { get; set; }
+    public MovementType MovementType { get; set; }
+    public Incoterms Incoterms { get; set; }
+    public PackageType PackageType { get; set; }
+    public CurrencyType Currency { get; set; }
+    public decimal OriginalAmount { get; set; }
+    public decimal ConvertedUSD { get; set; }
+    public DateTime CreatedAt { get; set; }
+}
