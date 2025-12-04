@@ -1,0 +1,77 @@
+<div class="login-container">
+  <div class="login-form">
+    <h2>Login</h2>
+
+    <form
+      nz-form
+      [formGroup]="loginForm"
+      (ngSubmit)="onSubmit()"
+      nzLayout="vertical"
+    >
+      <!-- EMAIL -->
+      <nz-form-item>
+        <nz-form-label nzRequired>Email</nz-form-label>
+        <nz-form-control nzValidateStatus="email">
+          <input
+            nz-input
+            type="email"
+            formControlName="email"
+            placeholder="Enter your email"
+          />
+          <div class="ant-form-item-explain-error" *ngIf="showError('email')">
+            <span *ngIf="loginForm.get('email')?.errors?.['required']"
+              >Email is required</span
+            >
+            <span *ngIf="loginForm.get('email')?.errors?.['email']"
+              >Please enter a valid email</span
+            >
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+
+      <!-- PASSWORD -->
+      <nz-form-item>
+        <nz-form-label nzRequired>Password</nz-form-label>
+        <nz-form-control nzValidateStatus="password">
+          <input
+            nz-input
+            type="password"
+            formControlName="password"
+            placeholder="Enter your password"
+          />
+          <div
+            class="ant-form-item-explain-error"
+            *ngIf="showError('password')"
+          >
+            <span *ngIf="loginForm.get('password')?.errors?.['required']"
+              >Password is required</span
+            >
+            <span *ngIf="loginForm.get('password')?.errors?.['minlength']"
+              >Password must be at least 6 characters</span
+            >
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+
+      <!-- BUTTON -->
+      <nz-form-item>
+        <nz-form-control [nzSpan]="18" [nzOffset]="6">
+          <div style="text-align: right">
+            <button
+              nz-button
+              nzType="primary"
+              type="submit"
+              [disabled]="loginForm.invalid"
+            >
+              Login
+            </button>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+
+    <p class="register-link" style="text-align: center; margin-top: 16px">
+      Don't have an account? <a routerLink="/register">Register here</a>
+    </p>
+  </div>
+</div>

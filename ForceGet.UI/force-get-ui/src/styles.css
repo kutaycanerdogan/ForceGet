@@ -1,0 +1,15 @@
+/* You can add global styles to this file, and also import other style files */
+.cdk-overlay-container {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  z-index: 2000 !important;
+}
+
+.cdk-overlay-pane {
+  position: absolute !important;
+}
+
+.nz-select-dropdown {
+  position: absolute !important;
+}

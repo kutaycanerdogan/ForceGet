@@ -1,6 +1,6 @@
 using ForceGet.Application.DTOs;
 using ForceGet.Application.Interfaces;
-using ForceGet.Domain.Enums;
+using ForceGet.Domain.Entities;
 using ForceGet.Infrastructure.Interfaces;
 
 using Microsoft.AspNetCore.Authorization;
@@ -14,42 +14,49 @@ namespace ForceGet.API.Controllers;
 public class QuotesController : ControllerBase
 {
     private readonly IQuoteService _quoteService;
-    private readonly ICityService _cityService;
+    private readonly ICountryService _countryService;
     private readonly ICurrencyService _currencyService;
 
-    public QuotesController(IQuoteService quoteService, ICityService cityService, ICurrencyService currencyService)
+    public QuotesController(IQuoteService quoteService, ICountryService countryService, ICurrencyService currencyService)
     {
         _quoteService = quoteService;
-        _cityService = cityService;
+        _countryService = countryService;
         _currencyService = currencyService;
     }
 
     [HttpPost]
-    public async Task<ActionResult<QuoteDto>> CreateQuote(QuoteRequestDto model)
+    public async Task<ActionResult<QuoteDto>> CreateQuote(QuoteDto model)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
         // Kullanıcı ID'sini JWT token'dan al
-        var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
-
+        model.UserId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+        model.CreatedAt = DateTime.UtcNow;
         try
         {
             // Döviz çevirisi
             var convertedUSD = await _currencyService.ConvertToUsdAsync(model.Currency.ToString(), model.OriginalAmount);
 
-            var quote = await _quoteService.CreateQuoteAsync(
-                userId,
-                model.Country,
-                model.City,
-                model.Mode,
-                model.MovementType,
-                model.Incoterms,
-                model.PackageType,
-                model.Currency,
-                model.OriginalAmount,
-                convertedUSD);
+            //Normalde Automapper ile yapıyoruz
+            var quote = new Quote
+            {
+                UserId = model.UserId,
+                Country = model.Country,
+                City = model.City,
+                Mode = model.Mode,
+                MovementType = model.MovementType,
+                Incoterms = model.Incoterms,
+                PackageType = model.PackageType,
+                Currency = model.Currency,
+                OriginalAmount = model.OriginalAmount,
+                ConvertedUSD = model.ConvertedUSD,
+                CreatedAt = model.CreatedAt
+            };
 
+            quote = await _quoteService.CreateQuoteAsync(quote);
+
+            //Normalde Automapper ile yapıyoruz
             return Ok(new QuoteDto
             {
                 Id = quote.Id,
@@ -81,7 +88,7 @@ public class QuotesController : ControllerBase
         try
         {
             var quotes = await _quoteService.GetQuotesByUserIdAsync(userId);
-            
+
             var quoteDtos = quotes.Select(q => new QuoteDto
             {
                 Id = q.Id,
@@ -99,20 +106,6 @@ public class QuotesController : ControllerBase
             });
 
             return Ok(quoteDtos);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
-
-    [HttpGet("cities")]
-    public async Task<ActionResult<IEnumerable<string>>> GetCities(string country)
-    {
-        try
-        {
-            var cities = await _cityService.GetCitiesByCountryAsync(country);
-            return Ok(cities);
         }
         catch (Exception ex)
         {

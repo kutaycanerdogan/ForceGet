@@ -1,0 +1,169 @@
+<div class="form-container">
+  <div class="form-card">
+    <h2>Create Quote</h2>
+
+    <form
+      nz-form
+      [formGroup]="quoteForm"
+      (ngSubmit)="onSubmit()"
+      nzLayout="vertical"
+    >
+      <!-- ROW 1 -->
+      <div class="form-row">
+        <nz-form-item class="form-col">
+          <nz-form-label nzRequired>Mode</nz-form-label>
+          <nz-form-control>
+            <nz-select formControlName="mode" nzPlaceHolder="Select mode">
+              <nz-option
+                *ngFor="let m of modes"
+                [nzValue]="m"
+                [nzLabel]="m"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item class="form-col">
+          <nz-form-label nzRequired>Movement Type</nz-form-label>
+          <nz-form-control>
+            <nz-select
+              formControlName="movementType"
+              nzPlaceHolder="Select movement type"
+            >
+              <nz-option
+                *ngFor="let mt of movementTypes"
+                [nzValue]="mt"
+                [nzLabel]="mt"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <!-- ROW 2 -->
+      <div class="form-row">
+        <nz-form-item class="form-col">
+          <nz-form-label nzRequired>Incoterms</nz-form-label>
+          <nz-form-control>
+            <nz-select
+              formControlName="incoterms"
+              nzPlaceHolder="Select incoterms"
+            >
+              <nz-option
+                *ngFor="let i of incoterms"
+                [nzValue]="i"
+                [nzLabel]="i"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item class="form-col">
+          <nz-form-label nzRequired>Package Type</nz-form-label>
+          <nz-form-control>
+            <nz-select
+              formControlName="packageType"
+              nzPlaceHolder="Select package type"
+            >
+              <nz-option
+                *ngFor="let pt of packageTypes"
+                [nzValue]="pt"
+                [nzLabel]="pt"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <!-- ROW 3 -->
+      <div class="form-row">
+        <nz-form-item class="form-col">
+          <nz-form-label nzRequired>Currency</nz-form-label>
+          <nz-form-control>
+            <nz-select
+              formControlName="currency"
+              nzPlaceHolder="Select currency"
+              (ngModelChange)="onAmountChange()"
+            >
+              <nz-option
+                *ngFor="let c of currencies"
+                [nzValue]="c"
+                [nzLabel]="c"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item class="form-col">
+          <nz-form-label nzRequired>Original Amount</nz-form-label>
+          <nz-form-control>
+            <input
+              nz-input
+              type="number"
+              formControlName="originalAmount"
+              placeholder="Enter amount"
+              (input)="onAmountChange()"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <!-- ROW 4 -->
+      <div class="form-row">
+        <nz-form-item class="form-col">
+          <nz-form-label>Converted USD Amount</nz-form-label>
+          <nz-form-control>
+            <span *ngIf="convertedAmount !== null; else noValue">
+              {{ convertedAmount | number : "1.2-2" }} USD
+            </span>
+            <ng-template #noValue>N/A</ng-template>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item class="form-col">
+          <nz-form-label nzRequired>Country</nz-form-label>
+          <nz-form-control>
+            <input
+              nz-input
+              formControlName="country"
+              placeholder="Enter country"
+              (input)="onCountryChange()"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <!-- ROW 5 -->
+      <div class="form-row">
+        <nz-form-item class="form-col">
+          <nz-form-label nzRequired>City</nz-form-label>
+          <nz-form-control>
+            <nz-select formControlName="city" nzPlaceHolder="Select city">
+              <nz-option
+                *ngFor="let city of cities"
+                [nzValue]="city"
+                [nzLabel]="city"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <!-- SUBMIT -->
+      <nz-form-item>
+        <nz-form-control>
+          <div style="text-align: right">
+            <button
+              nz-button
+              nzType="primary"
+              type="submit"
+              [disabled]="quoteForm.invalid"
+            >
+              Submit
+            </button>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </div>
+</div>

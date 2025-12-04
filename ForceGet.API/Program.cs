@@ -1,7 +1,5 @@
-using ForceGet.API.Extensions;
+﻿using ForceGet.API.Extensions;
 using ForceGet.API.Middleware;
-using ForceGet.Application.Interfaces;
-using ForceGet.Application.Services;
 using ForceGet.Infrastructure.Interceptors;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,20 +11,23 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Redis Configuration
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("Redis")
+                           ?? "localhost:6379";
+    options.InstanceName = "ForceGet:";
+});
+
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Add HTTP Client for external APIs with API Key
-builder.Services.AddHttpClient<ICityService, CityService>(client =>
+builder.Services.AddHttpClient("ApiNinjas", client =>
 {
-    client.DefaultRequestHeaders.Add("X-Api-Key", builder.Configuration["ApiNinjas:ApiKey"]);
-});
-
-builder.Services.AddHttpClient<ICurrencyService, CurrencyService>(client =>
-{
-    client.DefaultRequestHeaders.Add("X-Api-Key", builder.Configuration["ApiNinjas:ApiKey"]);
+    client.BaseAddress = new Uri("https://api.api-ninjas.com/v1/");
 });
 
 // Add Application Services
@@ -103,6 +104,12 @@ builder.Services.AddLogging(logging =>
     logging.AddDebug();
 });
 builder.Services.AddScoped<LoggingSaveChangesInterceptor>();
+
+//// AutoMapper Config artık lisans istediği için ayarlamadım
+//builder.Services.AddAutoMapper(cfg => {
+//    cfg.LicenseKey = "<License Key Here>";
+//});
+
 var app = builder.Build();
 
 // Global Error Handling Middleware

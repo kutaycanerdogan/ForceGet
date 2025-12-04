@@ -1,4 +1,6 @@
+﻿using ForceGet.Application.DTOs;
 using ForceGet.Application.Interfaces;
+
 using System.Text.Json;
 
 namespace ForceGet.Application.Services;
@@ -16,22 +18,24 @@ public class CurrencyService : ICurrencyService
     {
         try
         {
-            var response = await _httpClient.GetAsync($"https://api.api-ninjas.com/v1/currency?from={fromCurrency}&to=USD&amount={amount}");
-            response.EnsureSuccessStatusCode();
-            
-            var content = await response.Content.ReadAsStringAsync();
-            var currencies = JsonSerializer.Deserialize<List<CurrencyResponse>>(content);
-            
-            return currencies?.FirstOrDefault()?.ConvertedAmount ?? 0;
-        }
-        catch
-        {
-            return 0;
-        }
-    }
+            var response = await _httpClient.GetAsync($"https://api.api-ninjas.com/v1/convertcurrency?have={fromCurrency}&want=USD&amount=${amount}");
 
-    private class CurrencyResponse
-    {
-        public decimal ConvertedAmount { get; set; }
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var currencyDto = JsonSerializer.Deserialize<CurrencyExchangeDto>(content);
+
+                if (currencyDto != null)
+                {
+                    return currencyDto.NewAmount;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Currency conversion error: {ex.Message}");
+        }
+
+        return amount;
     }
 }

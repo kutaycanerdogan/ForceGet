@@ -1,0 +1,102 @@
+<div class="register-container">
+  <div class="register-form">
+    <h2>Register</h2>
+
+    <form
+      nz-form
+      [formGroup]="registerForm"
+      (ngSubmit)="onSubmit()"
+      [nzLayout]="'vertical'"
+    >
+      <!-- EMAIL -->
+      <nz-form-item>
+        <nz-form-label nzRequired>Email</nz-form-label>
+        <nz-form-control nzValidateStatus="email">
+          <input
+            nz-input
+            formControlName="email"
+            placeholder="Enter your email"
+          />
+          <div class="ant-form-item-explain-error" *ngIf="showError('email')">
+            <span *ngIf="registerForm.get('email')?.errors?.['required']"
+              >Email is required</span
+            >
+            <span *ngIf="registerForm.get('email')?.errors?.['email']"
+              >Please enter a valid email</span
+            >
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+
+      <!-- PASSWORD -->
+      <nz-form-item>
+        <nz-form-label nzRequired>Password</nz-form-label>
+        <nz-form-control nzValidateStatus="password">
+          <input
+            nz-input
+            type="password"
+            formControlName="password"
+            placeholder="Enter your password"
+          />
+          <div
+            class="ant-form-item-explain-error"
+            *ngIf="showError('password')"
+          >
+            <span *ngIf="registerForm.get('password')?.errors?.['required']"
+              >Password is required</span
+            >
+            <span *ngIf="registerForm.get('password')?.errors?.['minlength']"
+              >Password must be at least 6 characters</span
+            >
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+
+      <!-- CONFIRM PASSWORD -->
+      <nz-form-item>
+        <nz-form-label nzRequired>Confirm Password</nz-form-label>
+        <nz-form-control nzValidateStatus="confirmPassword">
+          <input
+            nz-input
+            type="password"
+            formControlName="confirmPassword"
+            placeholder="Confirm your password"
+          />
+          <div
+            class="ant-form-item-explain-error"
+            *ngIf="showError('confirmPassword')"
+          >
+            <span
+              *ngIf="registerForm.get('confirmPassword')?.errors?.['required']"
+              >Confirm password is required</span
+            >
+            <span
+              *ngIf="registerForm.get('confirmPassword')?.errors?.['mismatch']"
+              >Passwords do not match</span
+            >
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+
+      <!-- BUTTON -->
+      <nz-form-item>
+        <nz-form-control [nzSpan]="18" [nzOffset]="6">
+          <div style="text-align: right">
+            <button
+              nz-button
+              nzType="primary"
+              type="submit"
+              [disabled]="registerForm.invalid"
+            >
+              Register
+            </button>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+
+    <p class="login-link">
+      Already have an account? <a routerLink="/login">Login here</a>
+    </p>
+  </div>
+</div>

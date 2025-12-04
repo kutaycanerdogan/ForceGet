@@ -12,7 +12,8 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IQuoteService, QuoteService>();
-        services.AddScoped<ICityService, CityService>();
+        services.AddScoped<ICountryService, CountryService>();
         services.AddScoped<ICurrencyService, CurrencyService>();
+        services.AddScoped<IApiNinjasService, ApiNinjasService>();
     }
 }

@@ -1,0 +1,32 @@
+<nz-table #basicTable [nzData]="quotes">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>User Email</th>
+      <th>Country</th>
+      <th>City</th>
+      <th>Mode</th>
+      <th>Movement Type</th>
+      <th>Incoterms</th>
+      <th>Package Type</th>
+      <th>Original Currency & Amount</th>
+      <th>Converted USD Amount</th>
+      <th>Created Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let quote of basicTable.data">
+      <td>{{ quote.id }}</td>
+      <td>{{ quote.userId }}</td>
+      <td>{{ quote.country }}</td>
+      <td>{{ quote.city }}</td>
+      <td>{{ quote.mode }}</td>
+      <td>{{ quote.movementType }}</td>
+      <td>{{ quote.incoterms }}</td>
+      <td>{{ quote.packageType }}</td>
+      <td>{{ quote.currency }} {{ quote.originalAmount }}</td>
+      <td>{{ quote.convertedUSD }}</td>
+      <td>{{ quote.createdAt | date }}</td>
+    </tr>
+  </tbody>
+</nz-table>

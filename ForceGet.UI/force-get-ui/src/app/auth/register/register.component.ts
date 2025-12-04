@@ -1,0 +1,73 @@
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+
+@Component({
+  selector: 'app-register',
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.scss'],
+})
+export class RegisterComponent {
+  registerForm: FormGroup;
+
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {
+    this.registerForm = this.fb.group(
+      {
+        email: ['', [Validators.required, Validators.email]],
+        password: ['', [Validators.required, Validators.minLength(6)]],
+        confirmPassword: ['', [Validators.required]],
+      },
+      { validators: this.passwordMatchValidator }
+    );
+  }
+
+  passwordMatchValidator(form: FormGroup) {
+    const password = form.get('password');
+    const confirmPassword = form.get('confirmPassword');
+
+    if (
+      password &&
+      confirmPassword &&
+      password.value !== confirmPassword.value
+    ) {
+      confirmPassword.setErrors({ mismatch: true });
+    } else {
+      confirmPassword?.setErrors(null);
+    }
+
+    return null;
+  }
+
+  showError(controlName: string): boolean {
+    const control = this.registerForm.get(controlName);
+    return !!control && control.invalid && (control.dirty || control.touched);
+  }
+
+  onSubmit(): void {
+    if (this.registerForm.valid) {
+      const { email, password, confirmPassword } = this.registerForm.value;
+
+      this.authService.register(email, password, confirmPassword).subscribe({
+        next: () => {
+          this.authService.login(email, password).subscribe({
+            next: (response) => {
+              this.authService.setToken(response.token);
+              this.router.navigate(['/quotes/form']);
+            },
+            error: (err) => {
+              console.error('Login failed', err);
+            },
+          });
+        },
+        error: (err) => {
+          console.error('Registration failed', err);
+        },
+      });
+    }
+  }
+}
