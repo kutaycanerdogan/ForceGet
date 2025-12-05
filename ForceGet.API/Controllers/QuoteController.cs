@@ -1,6 +1,5 @@
 using ForceGet.API.Extensions;
 using ForceGet.Application.Interfaces;
-using ForceGet.Domain.Entities;
 using ForceGet.Infrastructure.DTOs;
 using ForceGet.Infrastructure.Interfaces;
 
@@ -34,24 +33,7 @@ public class QuoteController : ControllerBase
         try
         {
 
-            //Normalde Automapper, custom mapping, reflection vs ile yapıyoruz
-            var quote = new Quote
-            {
-                UserId = model.UserId,
-                Country = model.Country,
-                City = model.City,
-                Mode = model.Mode,
-                MovementType = model.MovementType,
-                Incoterms = model.Incoterms,
-                PackageType = model.PackageType,
-                FromCurrency = model.FromCurrency,
-                OriginalAmount = model.OriginalAmount,
-                ToCurrency = model.ToCurrency,
-                ConvertedAmount = model.ConvertedAmount,
-                CreatedAt = model.CreatedAt
-            };
-
-            quote = await _quoteService.CreateQuoteAsync(quote);
+            var quote = await _quoteService.CreateQuoteAsync(model);
 
             //Normalde Automapper, custom mapping, reflection vs ile yapıyoruz
             //direkt olarak OK dönmüyoruz., error handling ve response middleware eklenmeli
