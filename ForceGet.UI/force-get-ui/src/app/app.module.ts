@@ -1,4 +1,3 @@
-// app.module.ts
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -22,6 +21,7 @@ import { QuoteListComponent } from './quote/list/quote-list.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { AuthGuard } from './guards/auth.guard';
 import { HeaderComponent } from './layout/header/header.component';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -33,6 +33,7 @@ import { HeaderComponent } from './layout/header/header.component';
     HeaderComponent,
   ],
   imports: [
+    SharedModule,
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,

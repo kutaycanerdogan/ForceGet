@@ -5,6 +5,11 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="JsonData\countries+cities.json" />
+    <Content Remove="JsonData\countries.json" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ForceGet.Application\ForceGet.Application.csproj" />
     <ProjectReference Include="..\ForceGet.Infrastructure\ForceGet.Infrastructure.csproj" />
@@ -18,5 +23,9 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
+   <ItemGroup>
+     <None Include="JsonData\countries+cities.json" />
+     <None Include="JsonData\countries.json" />
+   </ItemGroup>
 
 </Project>

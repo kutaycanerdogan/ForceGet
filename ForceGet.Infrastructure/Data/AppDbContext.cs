@@ -12,6 +12,7 @@ public class AppDbContext : DbContext
 
     public DbSet<User> Users { get; set; }
     public DbSet<Quote> Quotes { get; set; }
+    public DbSet<CurrencyConversion> CurrencyConversion { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -32,9 +33,19 @@ public class AppDbContext : DbContext
             entity.Property(e => e.MovementType).IsRequired();
             entity.Property(e => e.Incoterms).IsRequired();
             entity.Property(e => e.PackageType).IsRequired();
-            entity.Property(e => e.Currency).IsRequired();
-            entity.Property(e => e.OriginalAmount).HasColumnType("decimal(18,2)");
-            entity.Property(e => e.ConvertedUSD).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.FromCurrency).IsRequired();
+            entity.Property(e => e.ToCurrency).IsRequired();
+            entity.Property(e => e.OriginalAmount).HasColumnType("decimal(18,5)");
+            entity.Property(e => e.ConvertedAmount).HasColumnType("decimal(18,5)");
+        });
+
+        modelBuilder.Entity<CurrencyConversion>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.OriginalAmount).IsRequired().HasColumnType("decimal(18,5)");
+            entity.Property(e => e.ConvertedAmount).HasColumnType("decimal(18,5)");
+            entity.Property(e => e.FromCurrency).IsRequired().HasMaxLength(3);
+            entity.Property(e => e.ToCurrency).IsRequired().HasMaxLength(3);
         });
 
         base.OnModelCreating(modelBuilder);

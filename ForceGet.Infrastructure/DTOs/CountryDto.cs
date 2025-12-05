@@ -1,4 +1,4 @@
-﻿namespace ForceGet.Application.DTOs
+﻿namespace ForceGet.Infrastructure.DTOs
 {
     public class CountryDto
     {

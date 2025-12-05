@@ -3,6 +3,7 @@ using System;
 using ForceGet.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ForceGet.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251205142303_currency")]
+    partial class currency
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -72,7 +75,7 @@ namespace ForceGet.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<decimal>("ConvertedAmount")
+                    b.Property<decimal>("ConvertedUSD")
                         .HasColumnType("decimal(18,5)");
 
                     b.Property<string>("Country")
@@ -83,7 +86,7 @@ namespace ForceGet.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("FromCurrency")
+                    b.Property<int>("Currency")
                         .HasColumnType("integer");
 
                     b.Property<int>("Incoterms")
@@ -99,9 +102,6 @@ namespace ForceGet.Infrastructure.Migrations
                         .HasColumnType("decimal(18,5)");
 
                     b.Property<int>("PackageType")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ToCurrency")
                         .HasColumnType("integer");
 
                     b.Property<int>("UserId")

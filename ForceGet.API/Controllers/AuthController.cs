@@ -1,5 +1,5 @@
 using ForceGet.Application.DTOs;
-using ForceGet.Application.Interfaces;
+using ForceGet.Infrastructure.DTOs;
 using ForceGet.Infrastructure.Interfaces;
 
 using Microsoft.AspNetCore.Mvc;

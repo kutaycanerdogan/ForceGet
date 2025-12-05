@@ -1,5 +1,4 @@
-// header/header.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 
@@ -8,31 +7,27 @@ import { Router } from '@angular/router';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent {
   isLoggedIn = false;
   userEmail = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private auth: AuthService, private router: Router) {
+    this.auth.isLoggedIn$.subscribe((status) => {
+      this.isLoggedIn = status;
+    });
 
-  ngOnInit(): void {
-    this.checkAuthStatus();
-  }
-
-  checkAuthStatus(): void {
-    const token = this.authService.getToken();
-    this.isLoggedIn = !!token;
-
-    if (this.isLoggedIn) {
-      // You can decode the JWT token to get user email
-      // For now, we'll just show a placeholder
-      this.userEmail = 'User';
-    }
+    this.auth.decoded$.subscribe((decoded) => {
+      this.userEmail =
+        decoded?.email ||
+        decoded?.[
+          'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'
+        ] ||
+        '';
+    });
   }
 
   logout(): void {
-    this.authService.logout();
-    this.isLoggedIn = false;
-    this.userEmail = '';
+    this.auth.logout();
     this.router.navigate(['/login']);
   }
 }

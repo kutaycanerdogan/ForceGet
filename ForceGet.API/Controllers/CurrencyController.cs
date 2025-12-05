@@ -1,4 +1,6 @@
-﻿using ForceGet.Application.Interfaces;
+﻿using ForceGet.API.Extensions;
+using ForceGet.Infrastructure.DTOs;
+using ForceGet.Infrastructure.Interfaces;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,17 +12,19 @@ namespace ForceGet.API.Controllers;
 [Authorize]
 public class CurrencyController : ControllerBase
 {
-    private readonly ICurrencyService _currencyService;
+    private readonly ICurrencyConversionService _currencyConversionService;
 
-    public CurrencyController(ICurrencyService currencyService)
+    public CurrencyController(ICurrencyConversionService currencyService)
     {
-        _currencyService = currencyService;
+        _currencyConversionService = currencyService;
     }
 
-    [HttpGet("convert/{fromCurrency}/{amount}")]
-    public async Task<IActionResult> ConvertToUsd(string fromCurrency, decimal amount)
+    [HttpPost("convert")]
+    public async Task<IActionResult> ConvertCurrencyAsync(CurrencyConversionDto model)
     {
-        var result = await _currencyService.ConvertToUsdAsync(fromCurrency, amount);
+        model.UserId = User.GetUserId();
+        model.ConvertedAt = DateTime.UtcNow;
+        var result = await _currencyConversionService.ConvertCurrencyAsync(model);
         return Ok(new { Amount = result });
     }
 }

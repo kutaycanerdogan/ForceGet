@@ -1,6 +1,7 @@
 using ForceGet.Application.Interfaces;
 using ForceGet.Domain.Entities;
 using ForceGet.Domain.Interfaces;
+using ForceGet.Infrastructure.DTOs;
 using ForceGet.Infrastructure.Interfaces;
 
 namespace ForceGet.Application.Services;
@@ -9,28 +10,92 @@ public class QuoteService : IQuoteService
 {
     private readonly IQuoteRepository _quoteRepository;
     private readonly ICountryService _countryService;
-    private readonly ICurrencyService _currencyService;
 
-    public QuoteService(IQuoteRepository quoteRepository, ICountryService countryService, ICurrencyService currencyService)
+    public QuoteService(IQuoteRepository quoteRepository, ICountryService countryService)
     {
         _quoteRepository = quoteRepository;
         _countryService = countryService;
-        _currencyService = currencyService;
     }
 
-    public async Task<Quote> CreateQuoteAsync(Quote quote)
+    public async Task<QuoteDto> CreateQuoteAsync(QuoteDto q)
     {
-        await _quoteRepository.AddAsync(quote);
-        return quote;
+        var quote = new Quote
+        {
+            Id = q.Id,
+            UserId = q.UserId,
+            Country = q.Country,
+            City = q.City,
+            Mode = q.Mode,
+            MovementType = q.MovementType,
+            Incoterms = q.Incoterms,
+            PackageType = q.PackageType,
+            FromCurrency = q.FromCurrency,
+            OriginalAmount = q.OriginalAmount,
+            ToCurrency = q.ToCurrency,
+            ConvertedAmount = q.ConvertedAmount,
+            CreatedAt = q.CreatedAt
+        };
+        quote = await _quoteRepository.AddAsync(quote);
+
+        return new QuoteDto
+        {
+            Id = quote.Id,
+            UserId = quote.UserId,
+            Country = quote.Country,
+            City = quote.City,
+            Mode = quote.Mode,
+            MovementType = quote.MovementType,
+            Incoterms = quote.Incoterms,
+            PackageType = quote.PackageType,
+            FromCurrency = quote.FromCurrency,
+            OriginalAmount = quote.OriginalAmount,
+            ToCurrency = quote.ToCurrency,
+            ConvertedAmount = quote.ConvertedAmount,
+            CreatedAt = quote.CreatedAt
+        };
     }
 
-    public async Task<IEnumerable<Quote>> GetQuotesByUserIdAsync(int userId)
+    public async Task<IEnumerable<QuoteDto>> GetQuotesByUserIdAsync(int userId)
     {
-        return await _quoteRepository.GetQuotesByUserIdAsync(userId);
+        var quotes = await _quoteRepository.GetQuotesByUserIdAsync(userId);
+        var quoteDtos = quotes.Select(q => new QuoteDto
+        {
+            Id = q.Id,
+            UserId = q.UserId,
+            Country = q.Country,
+            City = q.City,
+            Mode = q.Mode,
+            MovementType = q.MovementType,
+            Incoterms = q.Incoterms,
+            PackageType = q.PackageType,
+            FromCurrency = q.FromCurrency,
+            OriginalAmount = q.OriginalAmount,
+            ToCurrency = q.ToCurrency,
+            ConvertedAmount = q.ConvertedAmount,
+            CreatedAt = q.CreatedAt
+        });
+        return quoteDtos;
     }
 
-    public async Task<IEnumerable<Quote>> GetAllQuotesAsync()
+    public async Task<IEnumerable<QuoteDto>> GetAllQuotesAsync()
     {
-        return await _quoteRepository.GetAllAsync();
+        var quotes = await _quoteRepository.GetAllAsync();
+        var quoteDtos = quotes.Select(q => new QuoteDto
+        {
+            Id = q.Id,
+            UserId = q.UserId,
+            Country = q.Country,
+            City = q.City,
+            Mode = q.Mode,
+            MovementType = q.MovementType,
+            Incoterms = q.Incoterms,
+            PackageType = q.PackageType,
+            FromCurrency = q.FromCurrency,
+            OriginalAmount = q.OriginalAmount,
+            ToCurrency = q.ToCurrency,
+            ConvertedAmount = q.ConvertedAmount,
+            CreatedAt = q.CreatedAt
+        });
+        return quoteDtos;
     }
 }

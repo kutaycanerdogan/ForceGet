@@ -1,7 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { QuoteService } from '../../services/quote.service';
 import { Quote } from '../../models/quote.model';
-
+import {
+  Mode,
+  MovementType,
+  Incoterm,
+  PackageType,
+  CurrencyType,
+} from '../../models/enums.model';
 @Component({
   selector: 'app-quote-list',
   templateUrl: './quote-list.component.html',
@@ -9,6 +15,12 @@ import { Quote } from '../../models/quote.model';
 })
 export class QuoteListComponent implements OnInit {
   quotes: Quote[] = [];
+
+  Mode = Mode;
+  MovementType = MovementType;
+  Incoterm = Incoterm;
+  PackageType = PackageType;
+  CurrencyType = CurrencyType;
 
   constructor(private quoteService: QuoteService) {}
 

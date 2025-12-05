@@ -17,7 +17,7 @@
               <nz-option
                 *ngFor="let m of modes"
                 [nzValue]="m"
-                [nzLabel]="m"
+                [nzLabel]="m | enumLabel: Mode"
               ></nz-option>
             </nz-select>
           </nz-form-control>
@@ -33,7 +33,7 @@
               <nz-option
                 *ngFor="let mt of movementTypes"
                 [nzValue]="mt"
-                [nzLabel]="mt"
+                [nzLabel]="mt | enumLabel: MovementType"
               ></nz-option>
             </nz-select>
           </nz-form-control>
@@ -43,7 +43,7 @@
       <!-- ROW 2 -->
       <div class="form-row">
         <nz-form-item class="form-col">
-          <nz-form-label nzRequired>Incoterms</nz-form-label>
+          <nz-form-label nzRequired>Incoterm</nz-form-label>
           <nz-form-control>
             <nz-select
               formControlName="incoterms"
@@ -52,7 +52,7 @@
               <nz-option
                 *ngFor="let i of incoterms"
                 [nzValue]="i"
-                [nzLabel]="i"
+                [nzLabel]="i | enumLabel : Incoterm"
               ></nz-option>
             </nz-select>
           </nz-form-control>
@@ -68,7 +68,7 @@
               <nz-option
                 *ngFor="let pt of packageTypes"
                 [nzValue]="pt"
-                [nzLabel]="pt"
+                [nzLabel]="pt | enumLabel : PackageType"
               ></nz-option>
             </nz-select>
           </nz-form-control>
@@ -77,23 +77,85 @@
 
       <!-- ROW 3 -->
       <div class="form-row">
+        <!-- COUNTRY AUTOCOMPLETE -->
+        <nz-form-item class="form-col">
+          <nz-form-label nzRequired>Country</nz-form-label>
+          <nz-form-control>
+            <input
+              nz-input
+              formControlName="country"
+              placeholder="Type country"
+              [nzAutocomplete]="countryAuto"
+            />
+            <nz-autocomplete #countryAuto>
+              <!-- No data -->
+              <ng-container *ngIf="filteredCountries.length === 0">
+                <nz-auto-option nzDisabled> No countries found </nz-auto-option>
+              </ng-container>
+
+              <!-- Data list -->
+              <nz-auto-option
+                *ngFor="let c of filteredCountries"
+                [nzValue]="c.name"
+                (click)="onCountrySelected(c)"
+              >
+                {{ c.name }}
+              </nz-auto-option>
+            </nz-autocomplete>
+          </nz-form-control>
+        </nz-form-item>
+
+        <!-- CITY (manual input) -->
+        <nz-form-item class="form-col">
+          <nz-form-label nzRequired>City</nz-form-label>
+          <nz-form-control>
+            <input nz-input formControlName="city" placeholder="Enter city" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <h3>
+        Lütfen Para birimini USD, EUR,GBP vs seçmeyiniz. Api Ninjas ücretsiz
+        versiyonu kısıtlamaktadır
+      </h3>
+
+      <!-- ROW 4 -->
+      <div class="form-row">
         <nz-form-item class="form-col">
           <nz-form-label nzRequired>Currency</nz-form-label>
           <nz-form-control>
             <nz-select
-              formControlName="currency"
+              formControlName="fromCurrency"
               nzPlaceHolder="Select currency"
-              (ngModelChange)="onAmountChange()"
             >
               <nz-option
                 *ngFor="let c of currencies"
                 [nzValue]="c"
-                [nzLabel]="c"
+                [nzLabel]="c | enumLabel : CurrencyType"
               ></nz-option>
             </nz-select>
           </nz-form-control>
         </nz-form-item>
 
+        <nz-form-item class="form-col">
+          <nz-form-label nzRequired>To Currency</nz-form-label>
+          <nz-form-control>
+            <nz-select
+              formControlName="toCurrency"
+              nzPlaceHolder="Select currency"
+            >
+              <nz-option
+                *ngFor="let c of currencies"
+                [nzValue]="c"
+                [nzLabel]="c | enumLabel : CurrencyType"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <!-- ROW 5 -->
+      <div class="form-row">
         <nz-form-item class="form-col">
           <nz-form-label nzRequired>Original Amount</nz-form-label>
           <nz-form-control>
@@ -102,49 +164,20 @@
               type="number"
               formControlName="originalAmount"
               placeholder="Enter amount"
-              (input)="onAmountChange()"
             />
           </nz-form-control>
         </nz-form-item>
-      </div>
 
-      <!-- ROW 4 -->
-      <div class="form-row">
         <nz-form-item class="form-col">
-          <nz-form-label>Converted USD Amount</nz-form-label>
+          <nz-form-label>
+            Converted {{ quoteForm.get("toCurrency")?.value }} Amount
+          </nz-form-label>
           <nz-form-control>
             <span *ngIf="convertedAmount !== null; else noValue">
-              {{ convertedAmount | number : "1.2-2" }} USD
+              {{ convertedAmount | number : "1.2-2" }}
+              {{ quoteForm.get("toCurrency")?.value }}
             </span>
             <ng-template #noValue>N/A</ng-template>
-          </nz-form-control>
-        </nz-form-item>
-
-        <nz-form-item class="form-col">
-          <nz-form-label nzRequired>Country</nz-form-label>
-          <nz-form-control>
-            <input
-              nz-input
-              formControlName="country"
-              placeholder="Enter country"
-              (input)="onCountryChange()"
-            />
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-
-      <!-- ROW 5 -->
-      <div class="form-row">
-        <nz-form-item class="form-col">
-          <nz-form-label nzRequired>City</nz-form-label>
-          <nz-form-control>
-            <nz-select formControlName="city" nzPlaceHolder="Select city">
-              <nz-option
-                *ngFor="let city of cities"
-                [nzValue]="city"
-                [nzLabel]="city"
-              ></nz-option>
-            </nz-select>
           </nz-form-control>
         </nz-form-item>
       </div>

@@ -1,29 +1,28 @@
 export enum Mode {
-  LCL = 'LCL',
-  FCL = 'FCL',
-  Air = 'Air',
+  LCL,
+  FCL,
+  Air,
 }
 
 export enum MovementType {
-  DoorToDoor = 'Door to Door',
-  PortToDoor = 'Port to Door',
-  DoorToPort = 'Door to Port',
-  PortToPort = 'Port to Port',
+  DoorToDoor,
+  PortToDoor,
+  DoorToPort,
+  PortToPort,
 }
 
-export enum Incoterms {
-  DDP = 'DDP',
-  DAT = 'DAT',
+export enum Incoterm {
+  DDP,
+  DAT,
 }
 
 export enum PackageType {
-  Pallets = 'Pallets',
-  Boxes = 'Boxes',
-  Cartons = 'Cartons',
+  Pallets,
+  Boxes,
+  Cartons,
 }
-
-export enum Currency {
-  USD = 'USD',
-  CNY = 'CNY',
-  TRY = 'TRY',
+export enum CurrencyType {
+  USD,
+  CNY,
+  TRY,
 }

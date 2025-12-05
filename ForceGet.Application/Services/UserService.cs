@@ -24,9 +24,9 @@ public class UserService : IUserService
 
     public async Task<User> RegisterAsync(string email, string password)
     {
-        //var existingUser = await _userRepository.GetUserByEmailAsync(email);
-        //if (existingUser != null)
-        //    throw new Exception("User already exists");
+        var existingUser = await _userRepository.GetUserByEmailAsync(email);
+        if (existingUser != null)
+            throw new Exception("User already exists");
 
         var passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
 
@@ -69,8 +69,8 @@ public class UserService : IUserService
             issuer: jwtSettings["Issuer"],
             audience: jwtSettings["Audience"],
             claims: new[] {
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+                new Claim("email", user.Email),
+                new Claim("userId", user.Id.ToString())
             },
             expires: DateTime.Now.AddHours(24),
             signingCredentials: credentials

@@ -1,6 +1,7 @@
-using ForceGet.Application.DTOs;
+using ForceGet.API.Extensions;
 using ForceGet.Application.Interfaces;
 using ForceGet.Domain.Entities;
+using ForceGet.Infrastructure.DTOs;
 using ForceGet.Infrastructure.Interfaces;
 
 using Microsoft.AspNetCore.Authorization;
@@ -11,17 +12,15 @@ namespace ForceGet.API.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class QuotesController : ControllerBase
+public class QuoteController : ControllerBase
 {
     private readonly IQuoteService _quoteService;
     private readonly ICountryService _countryService;
-    private readonly ICurrencyService _currencyService;
 
-    public QuotesController(IQuoteService quoteService, ICountryService countryService, ICurrencyService currencyService)
+    public QuoteController(IQuoteService quoteService, ICountryService countryService)
     {
         _quoteService = quoteService;
         _countryService = countryService;
-        _currencyService = currencyService;
     }
 
     [HttpPost]
@@ -30,15 +29,12 @@ public class QuotesController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        // Kullanıcı ID'sini JWT token'dan al
-        model.UserId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+        model.UserId = User.GetUserId();
         model.CreatedAt = DateTime.UtcNow;
         try
         {
-            // Döviz çevirisi
-            var convertedUSD = await _currencyService.ConvertToUsdAsync(model.Currency.ToString(), model.OriginalAmount);
 
-            //Normalde Automapper ile yapıyoruz
+            //Normalde Automapper, custom mapping, reflection vs ile yapıyoruz
             var quote = new Quote
             {
                 UserId = model.UserId,
@@ -48,15 +44,17 @@ public class QuotesController : ControllerBase
                 MovementType = model.MovementType,
                 Incoterms = model.Incoterms,
                 PackageType = model.PackageType,
-                Currency = model.Currency,
+                FromCurrency = model.FromCurrency,
                 OriginalAmount = model.OriginalAmount,
-                ConvertedUSD = model.ConvertedUSD,
+                ToCurrency = model.ToCurrency,
+                ConvertedAmount = model.ConvertedAmount,
                 CreatedAt = model.CreatedAt
             };
 
             quote = await _quoteService.CreateQuoteAsync(quote);
 
-            //Normalde Automapper ile yapıyoruz
+            //Normalde Automapper, custom mapping, reflection vs ile yapıyoruz
+            //direkt olarak OK dönmüyoruz., error handling ve response middleware eklenmeli
             return Ok(new QuoteDto
             {
                 Id = quote.Id,
@@ -67,9 +65,10 @@ public class QuotesController : ControllerBase
                 MovementType = quote.MovementType,
                 Incoterms = quote.Incoterms,
                 PackageType = quote.PackageType,
-                Currency = quote.Currency,
+                FromCurrency = quote.FromCurrency,
                 OriginalAmount = quote.OriginalAmount,
-                ConvertedUSD = quote.ConvertedUSD,
+                ToCurrency = quote.ToCurrency,
+                ConvertedAmount = quote.ConvertedAmount,
                 CreatedAt = quote.CreatedAt
             });
         }
@@ -82,30 +81,11 @@ public class QuotesController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<QuoteDto>>> GetQuotes()
     {
-        // Kullanıcı ID'sini JWT token'dan al
-        var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
-
         try
         {
-            var quotes = await _quoteService.GetQuotesByUserIdAsync(userId);
+            var quotes = await _quoteService.GetQuotesByUserIdAsync(User.GetUserId());
 
-            var quoteDtos = quotes.Select(q => new QuoteDto
-            {
-                Id = q.Id,
-                UserId = q.UserId,
-                Country = q.Country,
-                City = q.City,
-                Mode = q.Mode,
-                MovementType = q.MovementType,
-                Incoterms = q.Incoterms,
-                PackageType = q.PackageType,
-                Currency = q.Currency,
-                OriginalAmount = q.OriginalAmount,
-                ConvertedUSD = q.ConvertedUSD,
-                CreatedAt = q.CreatedAt
-            });
-
-            return Ok(quoteDtos);
+            return Ok(quotes);
         }
         catch (Exception ex)
         {

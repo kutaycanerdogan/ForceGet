@@ -1,12 +1,13 @@
 ﻿using ForceGet.Application.Interfaces;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ForceGet.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-//[Authorize]
+[Authorize]
 public class CountryController : ControllerBase
 {
     private readonly ICountryService _countryService;
@@ -16,8 +17,9 @@ public class CountryController : ControllerBase
         _countryService = countryService;
     }
 
-    [HttpGet("country/{country}")]
-    public async Task<IActionResult> GetCitiesByCountry(string country)
+    [HttpGet("{country}")]
+    public async Task<IActionResult> GetCountriesBySearchAsync(string country)
+
     {
         var cities = await _countryService.GetCountriesBySearchAsync(country);
         return Ok(cities);

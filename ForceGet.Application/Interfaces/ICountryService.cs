@@ -1,4 +1,4 @@
-using ForceGet.Application.DTOs;
+using ForceGet.Infrastructure.DTOs;
 
 namespace ForceGet.Application.Interfaces;
 

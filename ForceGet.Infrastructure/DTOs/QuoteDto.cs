@@ -1,6 +1,7 @@
+using ForceGet.Domain.Entities;
 using ForceGet.Domain.Enums;
 
-namespace ForceGet.Application.DTOs;
+namespace ForceGet.Infrastructure.DTOs;
 
 public class QuoteDto
 {
@@ -12,8 +13,10 @@ public class QuoteDto
     public MovementType MovementType { get; set; }
     public Incoterms Incoterms { get; set; }
     public PackageType PackageType { get; set; }
-    public CurrencyType Currency { get; set; }
+    public CurrencyType FromCurrency { get; set; }
     public decimal OriginalAmount { get; set; }
-    public decimal ConvertedUSD { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public CurrencyType ToCurrency { get; set; }
+    public decimal ConvertedAmount { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public User? User { get; set; }
 }
